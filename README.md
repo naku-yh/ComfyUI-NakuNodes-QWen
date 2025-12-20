@@ -41,15 +41,15 @@ This is an integrated ComfyUI Qwen-Image image generation sampler node,support Z
 ## 🍧 Comparison Display
 ### Workflow Complexity Comparison
 - **Workflow without using [Qwen Image Integrated KSampler] (complicated, too many nodes, too many wires)**
-![alt text](images/1-1-en.png)
+
 - **Workflow using [Qwen Image Integrated KSampler] (extremely simple, single node done, almost no wires)**
-![alt text](images/1-2-en.png)
+
 
 ### Generated Image Effect Comparison
 - **Workflow without using [Qwen Image Integrated KSampler] (obvious offset, scaling)**
-![alt text](images/2-1.png)
+
 - **Workflow using [Qwen Image Integrated KSampler] (completely no offset, scaling)**
-![alt text](images/2-2.png)
+
 
 ## Installation Method
 
@@ -66,9 +66,9 @@ This is an integrated ComfyUI Qwen-Image image generation sampler node,support Z
 
 2. Clone the repository:
    ```bash
-   git clone https://github.com/NAKU/ComfyUI-Qwen-Image-Integrated-KSampler.git
+   git clone https://github.com/naku-yh/ComfyUI-NakuNodes-QWen.git
    or gitee repository:
-   git clone https://gitee.com/luguoli/ComfyUI-Qwen-Image-Integrated-KSampler.git
+   git clone https://gitee.com/naku-yh/ComfyUI-NakuNodes-QWen.git
    ```
 
 3. Install dependencies:
@@ -116,7 +116,6 @@ This is an integrated ComfyUI Qwen-Image image generation sampler node,support Z
 
 4. Execute the workflow
 
-![alt text](images/3-en.png)
 
 ### Advanced Features
 

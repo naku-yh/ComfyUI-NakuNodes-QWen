@@ -1,0 +1,207 @@
+{
+  "QwenImageIntegratedKSampler": {
+    "display_name": "NAKU 专用 QWEN集成采样器",
+    "description": "NAKU 专用 QWEN集成采样器 - K采样器，智能多模态采样器，支持文生图/图生图双模式，优化官方偏移问题，更遵从指令，图片缩放、可处理多张参考图、自动显存/内存管理、批量生成、自动保存、声音通知、AuraFlow优化、CFG标准化调节等全方位功能，不需要连那么多线啦~~~~",
+    "inputs": {
+      "clip": {
+        "name": "CLIP",
+        "tooltip": "CLIP - 用于文本编码和条件生成的CLIP模型"
+      },
+      "model": {
+        "name": "模型",
+        "tooltip": "模型 - 用作图像生成核心模型的扩散模型输入"
+      },
+      "positive_prompt": {
+        "name": "正向提示词",
+        "tooltip": "正向提示词 - 描述期望图像元素和特征的文本提示"
+      },
+      "negative_prompt": {
+        "name": "负向提示词",
+        "tooltip": "负向提示词 - 描述要避免的图像元素的文本提示"
+      },
+      "seed": {
+        "name": "随机种",
+        "tooltip": "随机种 - 随机种子控制，相同种子生成相同的图像结果"
+      },
+      "steps": {
+        "name": "步数",
+        "tooltip": "步数 - 采样步数，更多步数通常产生更好的图像质量但需要更多时间"
+      },
+      "cfg": {
+        "name": "CFG",
+        "tooltip": "CFG - 无分类器指导规模控制提示影响强度"
+      },
+      "sampler_name": {
+        "name": "采样器",
+        "tooltip": "采样器 - 采样算法类型，影响生成速度和质量"
+      },
+      "scheduler": {
+        "name": "调度器",
+        "tooltip": "调度器 - 控制噪声逐渐去除的方法"
+      },
+      "latent": {
+        "name": "Latent",
+        "tooltip": "Latent - 用于图生图或修复任务的潜空间图像输入"
+      },
+      "controlnet_data": {
+        "name": "ControlNet数据（可选）",
+        "tooltip": "ControlNet数据（可选） - 输入ControlNet集成加载器输出的数据包，直接应用ControlNet控制"
+      },
+      "vae": {
+        "name": "VAE",
+        "tooltip": "VAE - 用于将潜空间解码为最终可见图像的VAE模型输入"
+      },
+      "denoise": {
+        "name": "降噪",
+        "tooltip": "降噪 - 降噪强度控制，0-1范围，影响原始图像修改"
+      },
+      "image1": {
+        "name": "图像1（主图）",
+        "tooltip": "图像1（主图） - 用于条件和潜空间生成的参考图像1（主图）。如果没有提供，则为文生图。"
+      },
+      "image2": {
+        "name": "图像2",
+        "tooltip": "图像2 - 用于条件和潜空间生成的参考图像2"
+      },
+      "image3": {
+        "name": "图像3",
+        "tooltip": "图像3 - 用于条件和潜空间生成的参考图像3"
+      },
+      "image4": {
+        "name": "图像4",
+        "tooltip": "图像4 - 用于条件和潜空间生成的参考图像4"
+      },
+      "image5": {
+        "name": "图像5",
+        "tooltip": "图像5 - 用于条件和潜空间生成的参考图像5"
+      },
+      "instruction": {
+        "name": "指令",
+        "tooltip": "指令 - 用于指导参考图像图像编辑的系统指令"
+      },
+      "auraflow_shift": {
+        "name": "AuraFlow模型采样偏移",
+        "tooltip": "AuraFlow模型采样偏移 - AuraFlow模型采样偏移参数，影响速度和质量 (0-100)"
+      },
+      "cfg_norm_strength": {
+        "name": "CFGNorm强度",
+        "tooltip": "CFGNorm强度 - CFG标准化强度，动态调整CFG指导强度 (0-100)"
+      },
+      "enable_clean_gpu_memory": {
+        "name": "清理GPU内存",
+        "tooltip": "清理GPU内存 - 在采样/解码前后清理GPU内存，为其他应用程序释放资源"
+      },
+      "enable_clean_cpu_memory_after_finish": {
+        "name": "完成后清理CPU内存",
+        "tooltip": "完成后清理CPU内存 - 生成完成后清理CPU内存"
+      },
+      "extra_options": {
+        "name": "额外选项",
+        "tooltip": "额外选项 - 可选的高级设置连接，具有AuraFlow和CFG标准化功能"
+      },
+      "enable_sound_notification": {
+        "name": "声音通知",
+        "tooltip": "声音通知 - 解码完成后播放通知声音以提醒用户"
+      },
+      "image_scale_to_length": {
+        "name": "图像缩放到长度(如果为0则不缩放)",
+        "tooltip": "图像缩放到长度(如果宽高都更小则不缩放) - 可选，0为不缩放，如果参考图像宽度或高度超过此长度，将最长边缩放到此长度，保持宽高比"
+      },
+      "auto_save_output_folder": {
+        "name": "自动保存输出文件夹 (留空则不保存)",
+        "tooltip": "自动保存输出文件夹 (留空则不保存) - 留空以跳过保存"
+      },
+      "output_filename_prefix": {
+        "name": "输出文件名前缀",
+        "tooltip": "输出文件名前缀 - 默认auto_save"
+      },
+      "generation_mode": {
+        "name": "生成模式",
+        "tooltip": "生成模式 - 在文生图或图生图模式之间选择"
+      },
+      "batch_size": {
+        "name": "批次大小",
+        "tooltip": "批次大小 - 要生成的图像数量"
+      },
+      "width": {
+        "name": "宽度 (文生图必填，在图生图中填入缩放 / 0为不缩放)",
+        "tooltip": "宽度 (文生图必填，在图生图中填入缩放 / 0为不缩放)"
+      },
+      "height": {
+        "name": "高度 (文生图必填，在图生图中填入缩放 / 0为不缩放)",
+        "tooltip": "高度 (文生图必填，在图生图中填入缩放 / 0为不缩放)"
+      }
+    },
+    "outputs": {
+      "LATENT": {
+        "name": "Latent",
+        "tooltip": "Latent - 生成的潜空间图像输出，可传递给解码器创建最终图像"
+      },
+      "image": {
+        "name": "图像",
+        "tooltip": "图像 - 解码的最终可见图像输出，准备保存或进一步处理"
+      },
+      "scaled_image": {
+        "name": "缩放图像",
+        "tooltip": "缩放图像 - 缩放原始图像输出，用于进一步处理"
+      }
+    }
+  },
+  "EasyKSamplerExtraOptions": {
+    "display_name": "Easy KSampler额外选项",
+    "description": "Easy KSampler额外选项 - AuraFlow偏移和CFG标准化强度的高级参数设置",
+    "inputs": {
+
+    },
+    "outputs": {
+      "EXTRA_OPTIONS": {
+        "name": "额外选项",
+        "tooltip": "额外选项输出，包含AuraFlow和CFG标准化设置"
+      }
+    }
+  },
+  "QwenImageControlNetIntegratedLoader": {
+    "display_name": "NAKU 专用 QWEN-ControlNet集成加载器",
+    "description": "NAKU 专用 QWEN-ControlNet集成加载器 - 整合ControlNetLoader和SetUnionControlNetType，简化ControlNet使用，自动处理类型设置和数据准备",
+    "inputs": {
+      "image": {
+        "name": "控制图像",
+        "tooltip": "控制图像 - ControlNet控制图像输入"
+      },
+      "mask": {
+        "name": "遮罩（可选）",
+        "tooltip": "遮罩（可选） - 用于ControlNet区域控制的修复遮罩"
+      },
+      "controlnet_data": {
+        "name": "ControlNet数据（可选）",
+        "tooltip": "ControlNet数据（可选） - 输入ControlNet集成加载器输出的数据包，直接应用ControlNet控制"
+      },
+      "control_net_name": {
+        "name": "ControlNet模型",
+        "tooltip": "ControlNet模型 - 选择要使用的ControlNet模型"
+      },
+      "control_type": {
+        "name": "控制类型",
+        "tooltip": "控制类型 - 特定的ControlNet控制类型，如边缘、姿态检测、深度等"
+      },
+      "strength": {
+        "name": "控制强度",
+        "tooltip": "控制强度 - ControlNet对生成结果的影响强度"
+      },
+      "start_percent": {
+        "name": "控制步数开始百分比",
+        "tooltip": "控制步数开始百分比 - ControlNet效果开始应用的步数百分比"
+      },
+      "end_percent": {
+        "name": "控制步数结束百分比",
+        "tooltip": "控制步数结束百分比 - ControlNet效果结束的步数百分比"
+      }
+    },
+    "outputs": {
+      "control_net_data": {
+        "name": "ControlNet数据",
+        "tooltip": "ControlNet数据"
+      }
+    }
+  }
+}

@@ -130,7 +130,7 @@ class QwenImageIntegratedKSampler:
 
         
 
-        if generation_mode == "图生图 image-to-image":
+        if generation_mode == "图生图":
 
             if image1 is None:
                 raise Exception("图生图必须至少输入一张图片，请输入图像1（主图）。")
@@ -189,9 +189,9 @@ class QwenImageIntegratedKSampler:
                     if control_strength > 0:
 
                         # 图生图-局部重绘 时使用缩放主图
-                        if generation_mode == "图生图 image-to-image":
+                        if generation_mode == "图生图":
                             if control_type.lower() == "repaint" or control_type.lower() == "inpaint" or control_type.lower() == "inpainting" or control_type == "重绘" or control_type == "局部重绘":
-                                
+
                                 if width > 0 and height > 0:
                                     scaled_control_image, scaled_control_mask, _, _, _ = image_scale_by_aspect_ratio('original', 1, 1, 'letterbox', 'lanczos', '8', 'max_size', (width, height), '#000000', control_image, control_mask)
                                     control_image = scaled_control_image
@@ -241,8 +241,8 @@ class QwenImageIntegratedKSampler:
 
 
         if latent is None:
-            if image1_scaled is not None:
-                samples = vae.encode(image1_scaled[:,:,:,:3])
+            if generation_mode == "图生图" and image1_scaled is not None:
+                samples = vae.encode(image1_scaled[:,:,:,:3])  # Use scaled image1 (image1_scaled), not original
                 if batch_size > 1:
                     samples = samples.repeat((batch_size,) + ((1,) * (samples.ndim - 1)))
             else:

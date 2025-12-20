@@ -19,7 +19,7 @@ class QwenImageIntegratedKSampler:
 
     @classmethod
     def INPUT_TYPES(s):
-        generation_mode = ['文生图', '图生图']
+        generation_mode = ['文生图', '图像编辑模式']
         return {
             "required": {
                 "model": ("MODEL", {"tooltip": "模型 - 扩散模型输入，用作图像生成的核心模型"}),
@@ -130,10 +130,10 @@ class QwenImageIntegratedKSampler:
 
         
 
-        if generation_mode == "图生图":
+        if generation_mode == "图像编辑模式":
 
             if image1 is None:
-                raise Exception("图生图必须至少输入一张图片，请输入图像1（主图）。")
+                raise Exception("图像编辑模式必须至少输入一张图片，请输入图像1（主图）。")
 
             # Scale reference images if needed
 
@@ -188,8 +188,8 @@ class QwenImageIntegratedKSampler:
 
                     if control_strength > 0:
 
-                        # 图生图-局部重绘 时使用缩放主图
-                        if generation_mode == "图生图":
+                        # 图像编辑-局部重绘 时使用缩放主图
+                        if generation_mode == "图像编辑模式":
                             if control_type.lower() == "repaint" or control_type.lower() == "inpaint" or control_type.lower() == "inpainting" or control_type == "重绘" or control_type == "局部重绘":
 
                                 if width > 0 and height > 0:
@@ -241,7 +241,7 @@ class QwenImageIntegratedKSampler:
 
 
         if latent is None:
-            if generation_mode == "图生图" and image1_scaled is not None:
+            if generation_mode == "图像编辑模式" and image1_scaled is not None:
                 samples = vae.encode(image1_scaled[:,:,:,:3])  # Use scaled image1 (image1_scaled), not original
                 if batch_size > 1:
                     samples = samples.repeat((batch_size,) + ((1,) * (samples.ndim - 1)))

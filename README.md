@@ -1,9 +1,10 @@
 # NAKU 专用 QWEN集成采样器
 
-[![GitHub](https://img.shields.io/badge/GitHub-NAKU-orange)](https://github.com/NAKU)
-[![ComfyUI](https://img.shields.io/badge/ComfyUI-CustomNode-blue)](https://github.com/comfyanonymous/ComfyUI)
+## Original author is @luguoli（墙上的向日葵）##
+### Pls look at here https://github.com/luguoli/ComfyUI-Qwen-Image-Integrated-KSampler/ ###
+# Big Thanks for his great Job！ #
+I modified this node only to remove the emojis and apply a Chinese localization in my preferred style. I did not change the source code.
 
-[English](README-en.md) | **[简体中文](README-zh.md)**
 
 QwenImageIntegratedKSampler
 
@@ -158,16 +159,4 @@ This is an integrated ComfyUI Qwen-Image image generation sampler node,support Z
 ### Notification Function
 - **Sound Notification**: Only supported on Windows systems
 
-## Update Records
-### v1.0.6:
-- **Added Localization Script:** Starting from ComfyUI v0.3.68, Chinese language files became invalid. Added automatic localization script, double-click [自动汉化节点.bat] and restart ComfyUI, requires installing ComfyUI-DD-Translation plugin
 
-
-## 📞 Contact for Special Customization 📞
-- Author: NAKU
-- Author Email: naku@example.com
-
-
----
-
-**Made with ❤️ for the ComfyUI community**

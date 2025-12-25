@@ -175,6 +175,7 @@ class QwenImageIntegratedKSampler:
         # Apply ControlNet if provided
         if controlnet_data is not None and len(controlnet_data) > 0:
             try:
+                # 预先处理所有controlnet数据以避免重复操作
                 for c_data in controlnet_data:
                     control_net = c_data["control_net"]
                     control_type = c_data["control_type"]
@@ -207,34 +208,62 @@ class QwenImageIntegratedKSampler:
                             print(f"ControlNet {control_type}应用遮罩")
 
                         control_hint = control_image.movedim(-1,1)
+
+                        # 为每个ControlNet创建独立的处理流程，避免累积内存
                         cnets = {}
 
-                        out = []
-                        for conditioning in [positive, negative]:
-                            c = []
-                            for t in conditioning:
-                                d = t[1].copy()
+                        # 应用ControlNet到正向条件
+                        positive_c = []
+                        for t in positive:
+                            d = t[1].copy()
+                            prev_cnet = d.get('control', None)
+                            if prev_cnet in cnets:
+                                c_net = cnets[prev_cnet]
+                            else:
+                                c_net = control_net.copy().set_cond_hint(control_hint, control_strength, (control_start_percent, control_end_percent), vae=vae, extra_concat=extra_concat)
+                                c_net.set_previous_controlnet(prev_cnet)
+                                cnets[prev_cnet] = c_net
 
-                                prev_cnet = d.get('control', None)
-                                if prev_cnet in cnets:
-                                    c_net = cnets[prev_cnet]
-                                else:
-                                    c_net = control_net.copy().set_cond_hint(control_hint, control_strength, (control_start_percent, control_end_percent), vae=vae, extra_concat=extra_concat)
-                                    c_net.set_previous_controlnet(prev_cnet)
-                                    cnets[prev_cnet] = c_net
+                            d['control'] = c_net
+                            d['control_apply_to_uncond'] = False
+                            n = [t[0], d]
+                            positive_c.append(n)
 
-                                d['control'] = c_net
-                                d['control_apply_to_uncond'] = False
-                                n = [t[0], d]
-                                c.append(n)
-                            out.append(c)
+                        # 应用ControlNet到负向条件
+                        negative_c = []
+                        for t in negative:
+                            d = t[1].copy()
+                            prev_cnet = d.get('control', None)
+                            if prev_cnet in cnets:
+                                c_net = cnets[prev_cnet]
+                            else:
+                                # 对于负向条件，使用相同的已缓存ControlNet实例
+                                c_net = cnets.get(prev_cnet, control_net.copy()).set_cond_hint(control_hint, control_strength, (control_start_percent, control_end_percent), vae=vae, extra_concat=extra_concat)
+                                c_net.set_previous_controlnet(prev_cnet)
+                                cnets[prev_cnet] = c_net
 
-                        positive = out[0]
-                        negative = out[1]
-                        
+                            d['control'] = c_net
+                            d['control_apply_to_uncond'] = False
+                            n = [t[0], d]
+                            negative_c.append(n)
+
+                        positive = positive_c
+                        negative = negative_c
+
                         print(f"ControlNet {control_type}应用成功")
+
+                        # 清理临时变量以释放内存
+                        del control_hint, cnets
+                        if enable_clean_gpu_memory:
+                            comfy.model_management.cleanup_models()
+                            comfy.model_management.soft_empty_cache()
                     else:
                         print(f"⚠️ ControlNet {control_type}强度设置为0，不应用ControlNet")
+
+                # 在所有ControlNet处理完成后进行最终清理
+                if enable_clean_gpu_memory:
+                    gc.collect()
+                    comfy.model_management.soft_empty_cache()
             except Exception as e:
                 raise Exception(f"⚠️ [ControlNet] ControlNet 应用失败: {e}")
 

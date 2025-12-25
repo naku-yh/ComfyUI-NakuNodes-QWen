@@ -300,9 +300,6 @@ class QwenImageIntegratedKSampler:
             comfy.model_management.soft_empty_cache()
             gc.collect()
 
-        # 在采样前再次确保模型被正确加载到适当的设备上
-        model = model.to(comfy.model_management.get_torch_device())
-
         latent_output = common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent, denoise=denoise)
 
         print("正在解码潜空间...")

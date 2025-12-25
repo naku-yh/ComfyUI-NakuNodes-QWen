@@ -176,7 +176,7 @@ class QwenImageIntegratedKSampler:
         if controlnet_data is not None and len(controlnet_data) > 0:
             try:
                 # 预先处理所有controlnet数据以避免重复操作
-                for c_data in controlnet_data:
+                for c_idx, c_data in enumerate(controlnet_data):
                     control_net = c_data["control_net"]
                     control_type = c_data["control_type"]
                     control_image = c_data["image"]
@@ -185,7 +185,7 @@ class QwenImageIntegratedKSampler:
                     control_start_percent = c_data["start_percent"]
                     control_end_percent = c_data["end_percent"]
 
-                    print(f"应用ControlNet {control_type} 强度: {control_strength}")
+                    print(f"应用ControlNet {control_type} 强度: {control_strength} (第{c_idx+1}/{len(controlnet_data)}个)")
 
                     if control_strength > 0:
 
@@ -254,16 +254,16 @@ class QwenImageIntegratedKSampler:
 
                         # 清理临时变量以释放内存
                         del control_hint, cnets
-                        if enable_clean_gpu_memory:
+                        if enable_clean_gpu_memory or c_idx < len(controlnet_data) - 1:  # 在处理多个ControlNet时，或启用清理时，都进行清理
                             comfy.model_management.cleanup_models()
                             comfy.model_management.soft_empty_cache()
+                            gc.collect()
                     else:
                         print(f"⚠️ ControlNet {control_type}强度设置为0，不应用ControlNet")
 
                 # 在所有ControlNet处理完成后进行最终清理
-                if enable_clean_gpu_memory:
-                    gc.collect()
-                    comfy.model_management.soft_empty_cache()
+                gc.collect()
+                comfy.model_management.soft_empty_cache()
             except Exception as e:
                 raise Exception(f"⚠️ [ControlNet] ControlNet 应用失败: {e}")
 
@@ -294,6 +294,14 @@ class QwenImageIntegratedKSampler:
             except ImportError:
                 print("🔕 显存清理失败")
             print("预显存清理完成")
+        else:
+            # 即使未启用显式清理，也执行基本的内存管理
+            comfy.model_management.unload_all_models()
+            comfy.model_management.soft_empty_cache()
+            gc.collect()
+
+        # 在采样前再次确保模型被正确加载到适当的设备上
+        model = model.to(comfy.model_management.get_torch_device())
 
         latent_output = common_ksampler(model, seed, steps, cfg, sampler_name, scheduler, positive, negative, latent, denoise=denoise)
 
@@ -302,6 +310,12 @@ class QwenImageIntegratedKSampler:
         if len(output_images.shape) == 5: #Combine batches
             output_images = output_images.reshape(-1, output_images.shape[-3], output_images.shape[-2], output_images.shape[-1])
         print("解码完成")
+
+        # 解码后进行显存清理
+        if enable_clean_gpu_memory:
+            comfy.model_management.cleanup_models()
+            comfy.model_management.soft_empty_cache()
+            gc.collect()
 
 
 
